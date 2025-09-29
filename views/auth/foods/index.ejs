@@ -6,26 +6,21 @@
     <title>My Pantry</title>
   </head>
   <body>
-<%- include('../partials/_navbar.ejs', { user: user }) %>
+      <%- include('../partials/_navbar.ejs') %>
 
     <h1>Welcome to my Pantry</h1>
+   <a href="/users/<%= user._id %>/foods/new">Add new food Item</a>
+    <% if(HasEmptyPantry) { %>
+      <p>There are no items in this pantry.</p>
+    <% } else { %>
+      <ul>
+      <% pantry.forEach((pantryItem) => { %>
+          <li>
+            <a href="/users/<%= user._id %>/foods/<%= pantryItem._id %>"><%= pantryItem.name %></a>
+          </li>
+      <% }); %>
 
-    <a href="/users/<%=user._id%>/foods/new">Add New Item</a>
-
-    <ul>
-    <!-- to display items -->
- <% foods.forEach((food)=>{ %>
-  <li>
-      <%= food.name  %> 
-
-    <form action="/users/<%= user._id %>/foods/<%= food._id %>?_method=DELETE" method="POST">
-        <button type="submit">Delete <%=food.name%></button>
-    </form>
-         
-    <a href="/users/<%= user._id %>/foods/<%= food._id %>/edit">Edit item </a>
-  
-  </li>
-<% }) %>
-</ul>
+      </ul>
+    <% } %>
   </body>
 </html>

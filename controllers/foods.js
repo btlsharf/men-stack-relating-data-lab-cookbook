@@ -1,86 +1,89 @@
 const express = require('express');
 const router = express.Router();
-
 const User = require('../models/user.js');
 
-router.get('/', async (req, res) => {
+router.get('/',async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        res.render('foods/index.ejs', {
+            pantry: currentUser.pantry,
+            HasEmptyPantry: currentUser.pantry.length=== 0,
+        });
+
+    } catch (error) {
+        console.log(eroor);
+        res.redirect('/');
+    }
+});
+router.get('/new',(req,res)=>{
+    res.render('foods/new.ejs');
+});
+router.post('/',async(req,res)=>{
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        currentUser.pantry.push(req.body);
+        await currentUser.save();
+        res.redirect(`/users/${currentUser._id}/foods`);
+    }catch(eroor){
+        console.log(eroor);
+        res.redirect('/');
+
+    }
+    
+})
+
+
+router.get('/:itemId', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        const pantryItem = currentUser.pantry.id(req.params.itemId);
+        res.render('foods/show.ejs', {
+        pantryItem,
+        });
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+});
+
+router.delete('/:itemId', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        currentUser.pantry.id(req.params.itemId).deleteOne();
+        await currentUser.save();
+        res.redirect(`/users/${currentUser._id}/foods`);
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+});
+
+router.get('/:itemId/edit', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        const pantryItem = currentUser.pantry.id(req.params.itemId);
+        res.render('foods/edit.ejs', {
+            pantryItem,
+        });
+    } catch (error) {
+        console.log(error);
+        res.redirect('/');
+    }
+});
+
+router.put('/:itemId', async (req, res) => {
   try {
     const currentUser = await User.findById(req.session.user._id);
-    res.render('foods/index.ejs', {
-      currentUser: currentUser,         
-      foods: currentUser.pantry,  
-    });
+    const pantryItem = currentUser.pantry.id(req.params.itemId);
+    pantryItem.set(req.body);
+    await currentUser.save();
+    res.redirect(
+      `/users/${currentUser._id}/foods/${req.params.itemId}`
+    );
   } catch (error) {
     console.log(error);
     res.redirect('/');
   }
 });
 
-router.get('/new', async (req, res)=>{
-res.render('foods/new.ejs');
-});
-
-
-// with this route, items will be added to the database though it wont be shown to the user
-router.post('/', async (req, res)=>{
-
-     try {
-    // Look up the user from req.session
-    const currentUser = await User.findById(req.session.user._id);
-    // Push req.body (the new form data object) to the
-    // applications array of the current user
-    currentUser.pantry.push(req.body);
-    // Save changes to the user
-    await currentUser.save();
-    // Redirect back to the applications index view
-    res.redirect(`/users/${currentUser._id}/foods`);
-  } 
-  catch (error) {
-    // If any errors, log them and redirect back home
-    console.log(error);
-    res.redirect('/');
-  }
-
-});
-
-router.delete('/:foodId', async (req, res) => {
-try {
-const currentUser = await User.findById(req.session.user._id);
-currentUser.pantry.id(req.params.foodId).deleteOne();
-await currentUser.save();
-res.redirect(`/users/${currentUser._id}/foods`);
-
-}catch(error) {
-    console.log(error);
-    res.redirect('/');
-}
-});
-
-router.get('/:foodId/edit', async (req, res) => {
-try{
-const currentUser = await User.findById(req.session.user._id);
-const food = currentUser.pantry.id(req.params.foodId);
-res.render('foods/edit.ejs',{
-    food: food,
-});
-}catch(error) {
-    console.log(error);
-    res.redirect('/');
-}
-});
-
-router.put('/:foodId', async (req, res) => {
-try{
-const currentUser = await User.findById(req.session.user._id);
-const food = currentUser.pantry.id(req.params.foodId);
-food.set(req.body);
-await currentUser.save();
-res.redirect(`/users/${currentUser._id}/foods`);
-}catch(error){
-console.log(error);
-res.redirect('/');
-}
-});
-
-
-module.exports = router; 
+module.exports = router;

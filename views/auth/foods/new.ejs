@@ -3,24 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add new item</title>
+    <title>New Food Item</title>
 </head>
 <body>
-    
-  <%- include('../partials/_navbar.ejs') %>
-
-    <h1>Add New Item</h1>
-
-
-<form action="/users/<%= user._id %>/foods" method="POST">
-  
-  <label for="name">Name:</label>
-  <input type="text" name="name" id="name" required/>
-
-  
-  <button type="submit">Add Item</button>
-
-</form>
-
+    <h1>New Food Item</h1>
+    <form action="/users/<%=user._id%>/foods" method="post">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" required>
+        <button type="submit">Add Food</button>
+    </form>
 </body>
 </html>

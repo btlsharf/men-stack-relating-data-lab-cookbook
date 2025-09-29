@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community</title>
+    <title>Explore Our Community</title>
 </head>
 <body>
     <%- include('../partials/_navbar.ejs') %>
-  <h1>Our Community</h1>
+<h1>Explore Our Community</h1>
 <ul>
-  <% users.forEach(user => { %>
-    <% if (user._id.toString() !== currentUser._id.toString()) { %>
-      <li><%= user.username %>
-    <a href="/users/<%= user._id %>">View <%= user.username %>'s Pantry</a>
-</li>
-    <% } %>
+  <% AllUsers.forEach(user => { %>
+    <li>
+      <a href="/users/<%= user._id %>"><%= user.username %></a>
+    </li>
   <% }) %>
 </ul>
 </body>
